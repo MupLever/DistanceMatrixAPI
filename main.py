@@ -10,9 +10,6 @@ from utils.parse import Driver
 @asynccontextmanager
 async def get_driver(app: FastAPI):
     Driver.init_driver()
-    url = "https://yandex.ru/maps/213/moscow/?&mode=routes&rtext=&rtt=auto"
-
-    Driver.open_url(url=url)
 
     yield
 
