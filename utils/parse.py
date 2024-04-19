@@ -29,7 +29,7 @@ class Driver:
         cls.driver.close()
 
     @classmethod
-    async def parse_duration(cls, url: str) -> Tuple[str, Optional[int]]:
+    async def parse_duration(cls, url: str) -> Tuple[str, Optional[list]]:
         msg = ""
         timeout = random() * 0.5
         await asyncio.sleep(timeout)
@@ -51,12 +51,13 @@ class Driver:
             return msg, None
 
         await asyncio.sleep(timeout)
-        route_duration_xpath = "//div[@class='auto-route-snippet-view__route-duration']/text()"
-
-        data = Selector(text=cls.driver.page_source)
-        duration = re.sub(
-            r"[ |\xa0]", " ",
-            data.xpath(route_duration_xpath).get()
+        route_duration_xpath = (
+            "//div[@class='comparison-route-snippet-view']"
+            "/div[@class='comparison-route-snippet-view__route-title']"
+            "/div[@class='comparison-route-snippet-view__route-time-text']/text()"
         )
 
-        return msg, int(duration.split(" ")[0])
+        data = Selector(text=cls.driver.page_source)
+        durations = [re.sub(r"[ |\xa0]", " ", duration) for duration in data.xpath(route_duration_xpath).getall()]
+
+        return msg, durations
